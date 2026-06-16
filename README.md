@@ -9,13 +9,13 @@
 
 ```text
 InputSystem/
-├─ aftman.toml
-├─ default.project.json
-├─ README.md
-├─ selene.toml
-├─ stylua.toml
-└─ src/
-   └─ InputSystem.lua
+|-- aftman.toml
+|-- default.project.json
+|-- README.md
+|-- selene.toml
+|-- stylua.toml
+`-- src/
+    `-- InputSystem.lua
 ```
 
 ## Public API
@@ -79,4 +79,4 @@ jobs:
    - `Write` for contributors who need branch pushes.
    - `Maintain` for release managers.
    - `Admin` only for trusted maintainers who can change repo settings.
-6. For open source, also add a `LICENSE`, branch protection on `main`, and required CI checks before merge.
+6. For open source, also add branch protection on `main` and required CI checks before merge.
