@@ -1,0 +1,12 @@
+{
+  "name": "InputSystem",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "InputSystem": {
+        "$path": "src/InputSystem.lua"
+      }
+    }
+  }
+}
