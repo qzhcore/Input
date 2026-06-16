@@ -1,0 +1,20 @@
+[package]
+name = "qzhcore/input"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+description = "A configurable Rojo-ready wrapper for Roblox's Input Action System."
+license = "MIT"
+authors = ["qzhcore"]
+include = [
+	"src",
+	"default.project.json",
+	"README.md",
+	"LICENSE",
+]
+exclude = [
+	".github",
+	"sourcemap.json",
+]
+
+[dependencies]
