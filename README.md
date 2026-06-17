@@ -20,6 +20,21 @@ Supported focus areas:
 - Strict Luau types
 - Rojo, Wally, Selene, StyLua, and CI-ready project layout
 
+## Architecture
+
+The package is intentionally split into focused modules:
+
+- `init.lua`: stable public API and composition root.
+- `ContextStack.lua`: native `InputContext` stack activation and priority control.
+- `ValueNormalizer.lua`: shared math transforms for `Direction1D`, `Direction2D`, and `Direction3D`.
+- `Types.lua`: exported type contracts.
+- `Devices/KeyboardMouse.lua`: desktop capability detection.
+- `Devices/Mobile.lua`: mobile capability detection and touch-zone config access.
+- `Devices/Console.lua`: gamepad and console capability detection.
+- `Devices/VR.lua`: HMD and hand-controller telemetry translation.
+
+This keeps platform-specific logic isolated while preserving one clean API for game code.
+
 ## Project Structure
 
 ```text
@@ -28,13 +43,26 @@ InputSystem/
 |   `-- workflows/
 |       `-- ci.yml
 |-- src/
-|   `-- InputSystem.lua
+|   `-- InputSystem/
+|       |-- Devices/
+|       |   |-- Console.lua
+|       |   |-- KeyboardMouse.lua
+|       |   |-- Mobile.lua
+|       |   `-- VR.lua
+|       |-- ContextStack.lua
+|       |-- Logger.lua
+|       |-- Types.lua
+|       |-- ValueNormalizer.lua
+|       `-- init.lua
 |-- aftman.toml
 |-- default.project.json
 |-- LICENSE
+|-- package.json
 |-- README.md
 |-- selene.toml
 |-- stylua.toml
+|-- types/
+|   `-- index.d.ts
 `-- wally.toml
 ```
 
@@ -56,6 +84,22 @@ wally install
 ```
 
 The current repository includes its own [wally.toml](wally.toml) so it can be published cleanly when the API is ready.
+
+### With roblox-ts
+
+roblox-ts users can consume the package through a wrapper package or direct repository dependency. Type declarations live in [types/index.d.ts](types/index.d.ts), and package metadata lives in [package.json](package.json).
+
+```ts
+import InputSystem = require("@qzhcore/input");
+
+const system = InputSystem.new({
+	DefaultAnalogDeadZone: 0.12,
+});
+
+system.PushContext("Gameplay", InputSystem.Priority.Gameplay);
+```
+
+This repository still ships Luau as the runtime source. Your roblox-ts entry/init script can require the synced module from `ReplicatedStorage` or wrap the package API in TypeScript.
 
 ### With Rojo
 

@@ -6,6 +6,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 jobs:
   luau:
     runs-on: ubuntu-latest
@@ -16,6 +19,12 @@ jobs:
       - name: Install Aftman tools
         uses: ok-nick/setup-aftman@v0.4.2
 
+      - name: Show tool versions
+        run: |
+          rojo --version
+          selene --version
+          stylua --version
+
       - name: Generate Rojo sourcemap
         run: rojo sourcemap default.project.json --output sourcemap.json
 
@@ -24,3 +33,6 @@ jobs:
 
       - name: Check formatting with StyLua
         run: stylua --check src
+
+      - name: Validate roblox-ts declarations
+        run: test -f types/index.d.ts

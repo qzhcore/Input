@@ -1,0 +1,28 @@
+{
+  "name": "@qzhcore/input",
+  "version": "0.1.0",
+  "description": "A configurable Rojo-ready wrapper for Roblox's Input Action System.",
+  "main": "src/InputSystem/init.lua",
+  "types": "types/index.d.ts",
+  "files": [
+    "src",
+    "types",
+    "default.project.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "lint": "selene src",
+    "format:check": "stylua --check src",
+    "sourcemap": "rojo sourcemap default.project.json --output sourcemap.json"
+  },
+  "keywords": [
+    "roblox",
+    "luau",
+    "rojo",
+    "wally",
+    "roblox-ts",
+    "input"
+  ],
+  "license": "MIT"
+}
