@@ -3,7 +3,7 @@
 --[[
 	InputSystem
 
-	Placeholder namespace for a production-grade wrapper around Roblox's Input Action System.
+	
 
 	Architecture notes for open-source maintainers:
 	- Device-specific code lives under Devices so mobile, desktop, console, and VR behavior can evolve
