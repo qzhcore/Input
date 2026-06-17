@@ -293,18 +293,8 @@ Recommended branch protection for `main`:
 - Block force pushes.
 - Block branch deletion.
 
-## Contributing
 
-Friends and contributors should use this flow:
 
-1. Ask for collaborator access or fork the repository.
-2. Create a branch from `main`.
-3. Make focused changes.
-4. Run `selene src` and `stylua --check src`.
-5. Open a pull request into `main`.
-6. Wait for CI and review before merge.
-
-Use `Write` access for trusted contributors who need to push branches directly. Use forks for new external contributors.
 
 ## Roadmap
 
