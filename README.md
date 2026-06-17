@@ -50,6 +50,7 @@ InputSystem/
 |       |   |-- Mobile.lua
 |       |   `-- VR.lua
 |       |-- ContextStack.lua
+|       |-- InputStates.lua
 |       |-- Logger.lua
 |       |-- Types.lua
 |       |-- ValueNormalizer.lua

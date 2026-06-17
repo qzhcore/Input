@@ -28,7 +28,11 @@ export type ContextStack = typeof(setmetatable({} :: ContextStackPrivate, {} :: 
 	) -> Types.ContextRecord,
 	PushContext: (self: ContextStack, contextName: string, priority: number) -> Types.ContextRecord,
 	PopContext: (self: ContextStack) -> Types.ContextRecord?,
-	SetContextActive: (self: ContextStack, contextName: string, active: boolean) -> Types.ContextRecord,
+	SetContextActive: (
+		self: ContextStack,
+		contextName: string,
+		active: boolean
+	) -> Types.ContextRecord,
 	GetContext: (self: ContextStack, contextName: string) -> Types.ContextRecord?,
 	GetContextStack: (self: ContextStack) -> { Types.ContextRecord },
 	Destroy: (self: ContextStack) -> (),
@@ -99,7 +103,11 @@ local function findContext(contextName: string, parent: Instance): Instance?
 	return nil
 end
 
-local function createInputContext(contextName: string, parent: Instance, priority: number): Instance?
+local function createInputContext(
+	contextName: string,
+	parent: Instance,
+	priority: number
+): Instance?
 	local ok, created = pcall(function()
 		local context = Instance.new("InputContext")
 		context.Name = contextName
@@ -220,7 +228,9 @@ function ContextStack:RegisterContext(
 ): Types.ContextRecord
 	assert(context.ClassName == "InputContext", "RegisterContext expects an InputContext instance")
 
-	local resolvedPriority = priority or (context:GetAttribute("InputSystemPriority") :: number?) or 0
+	local resolvedPriority = priority
+		or (context:GetAttribute("InputSystemPriority") :: number?)
+		or 0
 	local record: Types.ContextRecord = {
 		Name = contextName,
 		Priority = resolvedPriority,

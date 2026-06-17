@@ -1,6 +1,7 @@
 --!strict
 
 local Types = require(script.Parent.Types)
+local InputStates = require(script.Parent.InputStates)
 
 local ValueNormalizer = {}
 
@@ -8,13 +9,17 @@ local DEFAULT_ANALOG_DEAD_ZONE = 0.12
 
 local function stateFromMagnitude(magnitude: number, deadZone: number): Enum.InputActionState
 	if magnitude > deadZone then
-		return Enum.InputActionState.Change
+		return InputStates.Change
 	end
 
-	return Enum.InputActionState.End
+	return InputStates.End
 end
 
-local function payload(state: Enum.InputActionState, value: any, delta: Vector3?): Types.InputPayload
+local function payload(
+	state: Enum.InputActionState,
+	value: any,
+	delta: Vector3?
+): Types.InputPayload
 	return {
 		State = state,
 		Value = value,
@@ -105,7 +110,11 @@ function ValueNormalizer.normalizeActionValue(
 		})
 	end
 
-	return payload(stateFromMagnitude(normalized.Magnitude, resolvedDeadZone), normalized, normalized - raw)
+	return payload(
+		stateFromMagnitude(normalized.Magnitude, resolvedDeadZone),
+		normalized,
+		normalized - raw
+	)
 end
 
 return table.freeze(ValueNormalizer)

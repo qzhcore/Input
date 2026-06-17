@@ -4,6 +4,7 @@ local UserInputService = game:GetService("UserInputService")
 local VRService = game:GetService("VRService")
 
 local Types = require(script.Parent.Parent.Types)
+local InputStates = require(script.Parent.Parent.InputStates)
 local ValueNormalizer = require(script.Parent.Parent.ValueNormalizer)
 
 export type VRHandTelemetry = {
@@ -79,8 +80,8 @@ local function makeHandTelemetry(hand: Enum.UserCFrame): VRHandTelemetry
 		PreviousCFrame = nil,
 		Position = Vector3.zero,
 		Delta = Vector3.zero,
-		Trigger = makePayload(Enum.InputActionState.End, 0, nil),
-		Thumbstick = makePayload(Enum.InputActionState.End, Vector2.zero, nil),
+		Trigger = makePayload(InputStates.End, 0, nil),
+		Thumbstick = makePayload(InputStates.End, Vector2.zero, nil),
 		LastUpdated = 0,
 	}
 end
@@ -90,7 +91,7 @@ function VRLayer.new(config: Types.Config): VRLayer
 		_config = config,
 		_leftHand = makeHandTelemetry(Enum.UserCFrame.LeftHand),
 		_rightHand = makeHandTelemetry(Enum.UserCFrame.RightHand),
-		_hmd = makePayload(Enum.InputActionState.End, CFrame.identity, Vector3.zero),
+		_hmd = makePayload(InputStates.End, CFrame.identity, Vector3.zero),
 		_lastHmdCFrame = nil,
 		_connections = {},
 	}, VRLayer) :: any
@@ -124,23 +125,29 @@ function VRLayer:_handDeltaEpsilon(): number
 end
 
 function VRLayer:_connect(): ()
-	self._connections.InputBegan = UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
-		if not gameProcessedEvent then
-			self:_handleInput(input, Enum.InputActionState.Begin)
+	self._connections.InputBegan = UserInputService.InputBegan:Connect(
+		function(input, gameProcessedEvent)
+			if not gameProcessedEvent then
+				self:_handleInput(input, InputStates.Begin)
+			end
 		end
-	end)
+	)
 
-	self._connections.InputChanged = UserInputService.InputChanged:Connect(function(input, gameProcessedEvent)
-		if not gameProcessedEvent then
-			self:_handleInput(input, Enum.InputActionState.Change)
+	self._connections.InputChanged = UserInputService.InputChanged:Connect(
+		function(input, gameProcessedEvent)
+			if not gameProcessedEvent then
+				self:_handleInput(input, InputStates.Change)
+			end
 		end
-	end)
+	)
 
-	self._connections.InputEnded = UserInputService.InputEnded:Connect(function(input, gameProcessedEvent)
-		if not gameProcessedEvent then
-			self:_handleInput(input, Enum.InputActionState.End)
+	self._connections.InputEnded = UserInputService.InputEnded:Connect(
+		function(input, gameProcessedEvent)
+			if not gameProcessedEvent then
+				self:_handleInput(input, InputStates.End)
+			end
 		end
-	end)
+	)
 end
 
 function VRLayer:_handFromInput(input: InputObject): VRHandTelemetry?
@@ -165,7 +172,9 @@ function VRLayer:_handleInput(input: InputObject, state: Enum.InputActionState):
 
 	if input.KeyCode == Enum.KeyCode.ButtonR2 or input.KeyCode == Enum.KeyCode.ButtonL2 then
 		self:_updateTrigger(hand, input, state)
-	elseif input.KeyCode == Enum.KeyCode.Thumbstick1 or input.KeyCode == Enum.KeyCode.Thumbstick2 then
+	elseif
+		input.KeyCode == Enum.KeyCode.Thumbstick1 or input.KeyCode == Enum.KeyCode.Thumbstick2
+	then
 		self:_updateThumbstick(hand, input, state)
 	end
 
@@ -182,11 +191,11 @@ function VRLayer:_updateTrigger(
 
 	-- EDGE CASE(threshold): Trigger release uses a lower threshold than press to prevent flicker
 	-- around the actuation point.
-	if state == Enum.InputActionState.Change then
+	if state == InputStates.Change then
 		if triggerValue >= self:_triggerPressedThreshold() then
-			payloadState = Enum.InputActionState.Begin
+			payloadState = InputStates.Begin
 		elseif triggerValue <= self:_triggerReleasedThreshold() then
-			payloadState = Enum.InputActionState.End
+			payloadState = InputStates.End
 		end
 	end
 
@@ -200,7 +209,7 @@ function VRLayer:_updateThumbstick(
 ): ()
 	local raw = Vector2.new(input.Position.X, input.Position.Y)
 	local normalized = ValueNormalizer.applyVector2DeadZone(raw, self:_thumbstickDeadZone())
-	local payloadState = if normalized.Magnitude > 0 then state else Enum.InputActionState.End
+	local payloadState = if normalized.Magnitude > 0 then state else InputStates.End
 
 	hand.Thumbstick = makePayload(
 		payloadState,
@@ -224,10 +233,12 @@ function VRLayer:_updateHeadsetTelemetry(): ()
 	local rawHeadCFrame = VRService:GetUserCFrame(Enum.UserCFrame.Head)
 	local worldHeadCFrame = if camera ~= nil then camera.CFrame * rawHeadCFrame else rawHeadCFrame
 	local previous = self._lastHmdCFrame
-	local delta = if previous ~= nil then worldHeadCFrame.Position - previous.Position else Vector3.zero
+	local delta = if previous ~= nil
+		then worldHeadCFrame.Position - previous.Position
+		else Vector3.zero
 
 	self._lastHmdCFrame = worldHeadCFrame
-	self._hmd = makePayload(Enum.InputActionState.Change, worldHeadCFrame, delta)
+	self._hmd = makePayload(InputStates.Change, worldHeadCFrame, delta)
 end
 
 function VRLayer:_updateHandCFrame(hand: VRHandTelemetry): ()

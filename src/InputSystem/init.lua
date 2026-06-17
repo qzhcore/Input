@@ -53,7 +53,11 @@ export type InputSystem = typeof(setmetatable({} :: InputSystemPrivate, {} :: an
 	) -> Types.ContextRecord,
 	PushContext: (self: InputSystem, contextName: string, priority: number) -> Types.ContextRecord,
 	PopContext: (self: InputSystem) -> Types.ContextRecord?,
-	SetContextActive: (self: InputSystem, contextName: string, active: boolean) -> Types.ContextRecord,
+	SetContextActive: (
+		self: InputSystem,
+		contextName: string,
+		active: boolean
+	) -> Types.ContextRecord,
 	GetContext: (self: InputSystem, contextName: string) -> Types.ContextRecord?,
 	GetContextStack: (self: InputSystem) -> { Types.ContextRecord },
 	GetPreferredDevice: (self: InputSystem) -> Types.DeviceKind,
