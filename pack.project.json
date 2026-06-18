@@ -1,7 +1,6 @@
 {
   "name": "InputSystem",
   "tree": {
-    "$className": "ModuleScript",
     "$path": "Linking.lua",
     "Lib": {
       "$path": "lib"

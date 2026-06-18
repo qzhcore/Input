@@ -25,23 +25,24 @@ jobs:
           unzip -q "$FOREMAN_DIR/foreman.zip" -d "$FOREMAN_DIR"
           chmod +x "$FOREMAN_DIR/foreman"
           echo "$FOREMAN_DIR" >> "$GITHUB_PATH"
+          echo "$HOME/.foreman/bin" >> "$GITHUB_PATH"
           "$FOREMAN_DIR/foreman" install
 
       - name: Show tool versions
         run: |
-          foreman run rojo --version || true
-          foreman run selene --version || true
-          foreman run stylua --version || true
-          foreman run wally --version || true
+          "$HOME/.foreman/bin/rojo" --version || true
+          "$HOME/.foreman/bin/selene" --version || true
+          "$HOME/.foreman/bin/stylua" --version || true
+          "$HOME/.foreman/bin/wally" --version || true
 
       - name: Generate Rojo sourcemap
-        run: foreman run rojo sourcemap default.project.json --output sourcemap.json
+        run: "$HOME/.foreman/bin/rojo" sourcemap default.project.json --output sourcemap.json
 
       - name: Lint with Selene
-        run: foreman run selene lib
+        run: "$HOME/.foreman/bin/selene" lib
 
       - name: Check formatting with StyLua
-        run: foreman run stylua --check lib Linking.lua
+        run: "$HOME/.foreman/bin/stylua" --check lib Linking.lua
 
       - name: Validate roblox-ts declarations
         run: test -f types/index.d.ts
@@ -62,12 +63,13 @@ jobs:
           unzip -q "$FOREMAN_DIR/foreman.zip" -d "$FOREMAN_DIR"
           chmod +x "$FOREMAN_DIR/foreman"
           echo "$FOREMAN_DIR" >> "$GITHUB_PATH"
+          echo "$HOME/.foreman/bin" >> "$GITHUB_PATH"
           "$FOREMAN_DIR/foreman" install
 
       - name: Build testing place
         run: |
           mkdir -p build
-          foreman run rojo build testing.project.json --output build/InputSystemTesting.rbxlx
+          "$HOME/.foreman/bin/rojo" build testing.project.json --output build/InputSystemTesting.rbxlx
 
       - name: Upload testing artifact
         uses: actions/upload-artifact@v4
@@ -96,12 +98,13 @@ jobs:
           unzip -q "$FOREMAN_DIR/foreman.zip" -d "$FOREMAN_DIR"
           chmod +x "$FOREMAN_DIR/foreman"
           echo "$FOREMAN_DIR" >> "$GITHUB_PATH"
+          echo "$HOME/.foreman/bin" >> "$GITHUB_PATH"
           "$FOREMAN_DIR/foreman" install
 
       - name: Build distributable model
         run: |
           mkdir -p build
-          foreman run rojo build pack.project.json --output build/InputSystem.rbxm
+          "$HOME/.foreman/bin/rojo" build pack.project.json --output build/InputSystem.rbxm
 
       - name: Upload package artifact
         uses: actions/upload-artifact@v4
@@ -111,7 +114,7 @@ jobs:
 
       - name: Publish to Wally
         if: env.WALLY_AUTH_TOKEN != ''
-        run: foreman run wally publish
+        run: "$HOME/.foreman/bin/wally" publish
 
       - name: Create draft GitHub release
         run: |
