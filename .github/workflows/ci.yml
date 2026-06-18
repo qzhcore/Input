@@ -18,23 +18,27 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Foreman tools
-        uses: Roblox/setup-foreman@v1
+        run: |
+          curl -L https://github.com/Roblox/foreman/releases/download/v1.7.0/foreman-linux-x86_64.zip -o foreman.zip
+          unzip -q foreman.zip -d foreman-bin
+          chmod +x foreman-bin/foreman
+          ./foreman-bin/foreman install
 
       - name: Show tool versions
         run: |
-          rojo --version
-          selene --version
-          stylua --version
-          wally --version
+          ./foreman-bin/foreman run rojo --version
+          ./foreman-bin/foreman run selene --version
+          ./foreman-bin/foreman run stylua --version
+          ./foreman-bin/foreman run wally --version
 
       - name: Generate Rojo sourcemap
-        run: rojo sourcemap default.project.json --output sourcemap.json
+        run: ./foreman-bin/foreman run rojo sourcemap default.project.json --output sourcemap.json
 
       - name: Lint with Selene
-        run: selene lib
+        run: ./foreman-bin/foreman run selene lib
 
       - name: Check formatting with StyLua
-        run: stylua --check lib Linking.lua
+        run: ./foreman-bin/foreman run stylua --check lib Linking.lua
 
       - name: Validate roblox-ts declarations
         run: test -f types/index.d.ts
@@ -48,12 +52,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Foreman tools
-        uses: Roblox/setup-foreman@v1
+        run: |
+          curl -L https://github.com/Roblox/foreman/releases/download/v1.7.0/foreman-linux-x86_64.zip -o foreman.zip
+          unzip -q foreman.zip -d foreman-bin
+          chmod +x foreman-bin/foreman
+          ./foreman-bin/foreman install
 
       - name: Build testing place
         run: |
           mkdir -p build
-          rojo build testing.project.json --output build/InputSystemTesting.rbxlx
+          ./foreman-bin/foreman run rojo build testing.project.json --output build/InputSystemTesting.rbxlx
 
       - name: Upload testing artifact
         uses: actions/upload-artifact@v4
@@ -75,12 +83,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Foreman tools
-        uses: Roblox/setup-foreman@v1
+        run: |
+          curl -L https://github.com/Roblox/foreman/releases/download/v1.7.0/foreman-linux-x86_64.zip -o foreman.zip
+          unzip -q foreman.zip -d foreman-bin
+          chmod +x foreman-bin/foreman
+          ./foreman-bin/foreman install
 
       - name: Build distributable model
         run: |
           mkdir -p build
-          rojo build pack.project.json --output build/InputSystem.rbxm
+          ./foreman-bin/foreman run rojo build pack.project.json --output build/InputSystem.rbxm
 
       - name: Upload package artifact
         uses: actions/upload-artifact@v4
@@ -90,7 +102,7 @@ jobs:
 
       - name: Publish to Wally
         if: env.WALLY_AUTH_TOKEN != ''
-        run: wally publish
+        run: ./foreman-bin/foreman run wally publish
 
       - name: Create draft GitHub release
         run: |
