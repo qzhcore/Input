@@ -36,13 +36,16 @@ jobs:
           "$HOME/.foreman/bin/wally" --version || true
 
       - name: Generate Rojo sourcemap
-        run: "$HOME/.foreman/bin/rojo" sourcemap default.project.json --output sourcemap.json
+        run: |
+          "$HOME/.foreman/bin/rojo" sourcemap default.project.json --output sourcemap.json
 
       - name: Lint with Selene
-        run: "$HOME/.foreman/bin/selene" lib
+        run: |
+          "$HOME/.foreman/bin/selene" lib
 
       - name: Check formatting with StyLua
-        run: "$HOME/.foreman/bin/stylua" --check lib Linking.lua
+        run: |
+          "$HOME/.foreman/bin/stylua" --check lib Linking.lua
 
       - name: Validate roblox-ts declarations
         run: test -f types/index.d.ts
@@ -114,7 +117,8 @@ jobs:
 
       - name: Publish to Wally
         if: env.WALLY_AUTH_TOKEN != ''
-        run: "$HOME/.foreman/bin/wally" publish
+        run: |
+          "$HOME/.foreman/bin/wally" publish
 
       - name: Create draft GitHub release
         run: |
