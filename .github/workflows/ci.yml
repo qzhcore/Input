@@ -29,10 +29,10 @@ jobs:
 
       - name: Show tool versions
         run: |
-          foreman run rojo --version
-          foreman run selene --version
-          foreman run stylua --version
-          foreman run wally --version
+          foreman run rojo --version || true
+          foreman run selene --version || true
+          foreman run stylua --version || true
+          foreman run wally --version || true
 
       - name: Generate Rojo sourcemap
         run: foreman run rojo sourcemap default.project.json --output sourcemap.json
