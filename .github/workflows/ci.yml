@@ -5,34 +5,95 @@ on:
   push:
     branches:
       - main
+      - dev
 
 permissions:
   contents: read
 
 jobs:
-  luau:
+  quality:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Aftman tools
-        uses: ok-nick/setup-aftman@v0.4.2
+      - name: Install Foreman tools
+        uses: Roblox/setup-foreman@v1
 
       - name: Show tool versions
         run: |
           rojo --version
           selene --version
           stylua --version
+          wally --version
 
       - name: Generate Rojo sourcemap
         run: rojo sourcemap default.project.json --output sourcemap.json
 
       - name: Lint with Selene
-        run: selene src
+        run: selene lib
 
       - name: Check formatting with StyLua
-        run: stylua --check src
+        run: stylua --check lib Linking.lua
 
       - name: Validate roblox-ts declarations
         run: test -f types/index.d.ts
+
+  build-dev:
+    if: github.ref == 'refs/heads/dev'
+    needs: quality
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Foreman tools
+        uses: Roblox/setup-foreman@v1
+
+      - name: Build testing place
+        run: |
+          mkdir -p build
+          rojo build testing.project.json --output build/InputSystemTesting.rbxlx
+
+      - name: Upload testing artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: InputSystemTesting
+          path: build/InputSystemTesting.rbxlx
+
+  package-main:
+    if: github.ref == 'refs/heads/main'
+    needs: quality
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      WALLY_AUTH_TOKEN: ${{ secrets.WALLY_AUTH_TOKEN }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Foreman tools
+        uses: Roblox/setup-foreman@v1
+
+      - name: Build distributable model
+        run: |
+          mkdir -p build
+          rojo build pack.project.json --output build/InputSystem.rbxm
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: InputSystem-rbxm
+          path: build/InputSystem.rbxm
+
+      - name: Publish to Wally
+        if: env.WALLY_AUTH_TOKEN != ''
+        run: wally publish
+
+      - name: Create draft GitHub release
+        run: |
+          VERSION=$(grep '^version =' wally.toml | sed -E 's/version = "([^"]+)"/\1/')
+          TAG="v${VERSION}-${GITHUB_SHA::7}"
+          gh release create "$TAG" build/InputSystem.rbxm --draft --title "InputSystem ${VERSION}" --notes "Automated draft release for ${GITHUB_SHA}."

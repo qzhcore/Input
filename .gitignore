@@ -3,6 +3,7 @@
 *.rbxm
 *.rbxmx
 sourcemap.json
+build/
 .vscode/
 .aftman/
 Packages/

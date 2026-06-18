@@ -1,11 +1,17 @@
 {
-  "name": "InputSystem",
+  "name": "InputSystemTesting",
   "tree": {
     "$className": "DataModel",
     "ReplicatedStorage": {
       "$className": "ReplicatedStorage",
       "InputSystem": {
         "$path": "lib"
+      }
+    },
+    "TestService": {
+      "$className": "TestService",
+      "InputSystemTests": {
+        "$path": "tests"
       }
     }
   }

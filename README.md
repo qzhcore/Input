@@ -42,26 +42,30 @@ InputSystem/
 |-- .github/
 |   `-- workflows/
 |       `-- ci.yml
-|-- src/
-|   `-- InputSystem/
-|       |-- Devices/
-|       |   |-- Console.lua
-|       |   |-- KeyboardMouse.lua
-|       |   |-- Mobile.lua
-|       |   `-- VR.lua
-|       |-- ContextStack.lua
-|       |-- InputStates.lua
-|       |-- Logger.lua
-|       |-- Types.lua
-|       |-- ValueNormalizer.lua
-|       `-- init.lua
-|-- aftman.toml
+|-- lib/
+|   |-- Devices/
+|   |   |-- Console.lua
+|   |   |-- KeyboardMouse.lua
+|   |   |-- Mobile.lua
+|   |   `-- VR.lua
+|   |-- ContextStack.lua
+|   |-- InputStates.lua
+|   |-- Logger.lua
+|   |-- Types.lua
+|   |-- ValueNormalizer.lua
+|   `-- init.lua
+|-- tests/
+|   `-- InputSystem.spec.lua
 |-- default.project.json
+|-- foreman.toml
+|-- Linking.lua
 |-- LICENSE
 |-- package.json
+|-- pack.project.json
 |-- README.md
 |-- selene.toml
 |-- stylua.toml
+|-- testing.project.json
 |-- types/
 |   `-- index.d.ts
 `-- wally.toml
@@ -270,31 +274,59 @@ MobileTouchZones = {
 
 ## DevOps
 
-Install pinned tooling with Aftman:
+Install pinned tooling with Foreman:
 
 ```powershell
-aftman install
+foreman install
 ```
 
 Run local checks:
 
 ```powershell
 rojo sourcemap default.project.json --output sourcemap.json
-selene src
-stylua --check src
+selene lib
+stylua --check lib Linking.lua
 ```
 
-The GitHub Actions workflow in [.github/workflows/ci.yml](.github/workflows/ci.yml) runs the same checks on pull requests and pushes to `main`.
+Build local artifacts:
+
+```powershell
+rojo build testing.project.json --output build/InputSystemTesting.rbxlx
+rojo build pack.project.json --output build/InputSystem.rbxm
+```
+
+The GitHub Actions workflow in [.github/workflows/ci.yml](.github/workflows/ci.yml) follows a dev/main pipeline:
+
+- Pull requests and pushes run `quality`: Rojo sourcemap, Selene, StyLua, and roblox-ts declaration validation.
+- Pushes to `dev` build a testing place artifact.
+- Pushes to `main` build a distributable `.rbxm`, upload it as an artifact, optionally publish to Wally when `WALLY_AUTH_TOKEN` exists, and create a draft GitHub Release.
+
+Development policy:
+
+- Do active work on `dev`.
+- Open pull requests from `dev` or feature branches into `main`.
+- Bump `version` in [wally.toml](wally.toml) before production-ready `main` releases.
+- Keep `main` production-ready.
 
 Recommended branch protection for `main`:
 
 - Require pull request reviews before merge.
-- Require the `luau` CI job to pass.
+- Require the `quality` CI job to pass.
 - Require branches to be up to date before merge.
 - Block force pushes.
 - Block branch deletion.
 
+## Contributing
 
+Friends and contributors should use this flow:
+
+1. Install Foreman and run `foreman install`.
+2. Branch from `dev`.
+3. Make focused changes in `lib`.
+4. Run `selene lib` and `stylua --check lib Linking.lua`.
+5. Build with `rojo build pack.project.json --output build/InputSystem.rbxm` when changing package layout.
+6. Open a pull request.
+7. Merge to `main` only after CI is green and the Wally version is bumped for releases.
 
 
 ## Roadmap

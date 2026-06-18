@@ -7,8 +7,11 @@ description = "A configurable Rojo-ready wrapper for Roblox's Input Action Syste
 license = "MIT"
 authors = ["qzhcore"]
 include = [
-	"src",
+	"lib",
+	"Linking.lua",
 	"default.project.json",
+	"pack.project.json",
+	"testing.project.json",
 	"README.md",
 	"LICENSE",
 ]
