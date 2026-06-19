@@ -335,3 +335,4 @@ Friends and contributors should use this flow:
 - More device-specific adapters for mobile, console, and desktop action payloads.
 - Example place with real `InputContext` and `InputAction` assets.
 - Test harnesses for context-stack ordering and analog threshold behavior.
+- Do a full release for Input.
