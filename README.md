@@ -301,7 +301,7 @@ The GitHub Actions workflow in [.github/workflows/ci.yml](.github/workflows/ci.y
 - Pushes to `dev` build a testing place artifact.
 - Pushes to `main` build a distributable `.rbxm`, upload it as an artifact, optionally publish to Wally when `WALLY_AUTH_TOKEN` exists, and create a draft GitHub Release.
 
-Development policy:
+Development policy
 
 - Do active work on `dev`.
 - Open pull requests from `dev` or feature branches into `main`.
